@@ -1,0 +1,3 @@
+export const BIC_ADDRESS = "0xe8afce87993bd475faf2aea62e0b008dc27ab81a";
+export const TO_ADDRESS = "0x9F969EcA8815562260Fba6C533533a918841da2a";
+
