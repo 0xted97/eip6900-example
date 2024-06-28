@@ -60,7 +60,7 @@ const MultiSignPage: NextPage = () => {
     if (data) {
       const client = createWalletClient({
         account: address,
-        chain: arbitrum,
+        chain: arbitrumSepolia,
         transport: custom(window.ethereum),
       });
 
@@ -73,19 +73,19 @@ const MultiSignPage: NextPage = () => {
       const smartAccountClient = await createMultisigAccountAlchemyClient({
         apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
         chain: arbitrumSepolia,
-        ...(process.env.NEXT_PUBLIC_MULTI_SIG_ACCOUNT
-          ? {
-              accountAddress:
-                `${process.env.NEXT_PUBLIC_MULTI_SIG_ACCOUNT}` as `0x${string}`,
-            }
-          : {}),
+        // ...(process.env.NEXT_PUBLIC_MULTI_SIG_ACCOUNT
+        //   ? {
+        //       accountAddress:
+        //         `${process.env.NEXT_PUBLIC_MULTI_SIG_ACCOUNT}` as `0x${string}`,
+        //     }
+        //   : {}),
         // you can swap this out for any SmartAccountSigner
         signer: eoaSigner,
         owners: owners as `0x${string}`[],
         threshold,
-        gasManagerConfig: {
-          policyId: process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER as string,
-        },
+        // gasManagerConfig: {
+        //   policyId: process.env.NEXT_PUBLIC_ALCHEMY_GAS_MANAGER as string,
+        // },
       });
       setSmartAccount(smartAccountClient);
     }
@@ -158,8 +158,8 @@ const MultiSignPage: NextPage = () => {
         setAggregatedSignature(result.aggregatedSignature as Hex);
       }
       if (isLastSignPropose) {
-        const multiSignAccount = await constructMultiSignAccount();
-        const result = await multiSignAccount.sendUserOperation({
+
+        const result = await smartAccount.sendUserOperation({
           uo: proposeRequestData.callData,
           account: smartAccount.account,
           context: {
@@ -198,7 +198,7 @@ const MultiSignPage: NextPage = () => {
       if (isInclude) {
         return (
           <div>
-            <p>Signed</p>
+            <p>Signed, please switch to other owner</p>
             {/* <Button onClick={()=>{switchAccount({
             connector: metaMask()
           })}}>Switch Account</Button> */}
@@ -230,6 +230,10 @@ const MultiSignPage: NextPage = () => {
           <div>{renderProposeData()}</div>
         </div>
         <div>{renderButton()}</div>
+        <div>
+            <h1>Transaction Hash</h1>
+            <div>{txHash}</div>
+          </div>
       </main>
     </div>
   );
